@@ -9,6 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
+    convertDate() {
+      let convertDate = new Date(this.deadline).toISOString()
+      convertDate = convertDate.split('T')[0]
+      return convertDate
+    }
+
+
+
     static associate(models) {
       // define association here
       Project.belongsToMany(models.Employee, {

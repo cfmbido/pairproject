@@ -3,18 +3,19 @@ const { User, Project, Employee, EmployeeProject } = require('../models/index')
 
 
 class Controller {
-    static home(req, res){
+    static home(req, res) {
         console.log(req.session)
-        res.render('home')
+        let data = { name: req.session.name }
+        res.render('home', { data })
     }
 
-    static add_dataForm(req, res){
+    static add_dataForm(req, res) {
         console.log(req.session)
         res.render('add_data')
     }
 
-    static add_data(req, res){
-        
+    static add_data(req, res) {
+
         let newEmployee = {
             first_name: req.body.first_name,
             last_name: req.body.last_name,
@@ -25,17 +26,17 @@ class Controller {
             UserId: req.session.UserId
         }
 
-        if(req.session.UserId){
+        if (req.session.UserId) {
             Employee.findOne({
-                where:{
+                where: {
                     UserId: req.session.UserId
-                }   
+                }
             })
                 .then(data => {
                     console.log(data)
-                    if(data){
+                    if (data) {
                         res.send('sudah mempunyai data')
-                    }else{
+                    } else {
                         Employee.create(newEmployee)
                         req.session.role = newEmployee.role
                         res.redirect('/')
@@ -44,17 +45,17 @@ class Controller {
                 .catch(err => {
                     res.send(err)
                 })
-        }else{
+        } else {
             res.send('belum login')
         }
     }
 
-    static registerForm(req, res){
+    static registerForm(req, res) {
         res.render('register')
     }
 
-    static register(req, res){
-        
+    static register(req, res) {
+
         let newUser = {
             username: req.body.username,
             password: req.body.password
@@ -70,36 +71,37 @@ class Controller {
             })
     }
 
-    static loginForm(req, res){
+    static loginForm(req, res) {
         res.render('login')
     }
 
-    static login(req, res){
+    static login(req, res) {
 
         User.findOne({
-            where:{
+            where: {
                 username: req.body.username
             }
         })
             .then(data => {
-                if(data && data.password === req.body.password){
+                if (data && data.password === req.body.password) {
                     req.session.UserId = data.id
 
                     return Employee.findOne({
-                        where:{
+                        where: {
                             UserId: req.session.UserId
-                        }   
+                        }
                     })
                 }
-                else{
+                else {
                     res.redirect('/login')
                 }
             })
             .then(data => {
-                if(data){
+                if (data) {
+                    req.session.name = data.first_name + ' ' + data.last_name
                     req.session.role = data.role
                     res.redirect('/')
-                }else{
+                } else {
                     res.redirect('/')
                 }
             })
@@ -108,10 +110,10 @@ class Controller {
             })
     }
 
-    static listEmployee(req, res){
-        
+    static listEmployee(req, res) {
+
         Employee.findAll()
-            .then(data => {  
+            .then(data => {
                 res.render('list_employee', { data })
             })
             .catch(err => {
@@ -119,38 +121,38 @@ class Controller {
             })
     }
 
-    static add_projectForm(req, res){
+    static add_projectForm(req, res) {
         console.log(req.session)
         res.render('add_project')
     }
 
-    static add_project(req, res){
-        
+    static add_project(req, res) {
+
         let newProject = {
             name: req.body.name,
             deadline: req.body.deadline
         }
 
-        if(req.session.role === 'Project Manager'){
+        if (req.session.role === 'Project Manager') {
             Project.create(newProject)
-            .then(data => {
-                res.send('berhasil menambahkan project')
-            })
-            .catch(err => {
-                res.send(err)
-            })  
+                .then(data => {
+                    res.send('berhasil menambahkan project')
+                    res.redirect('/project')
+                })
+                .catch(err => {
+                    res.send(err)
+                })
         } else {
             res.send('Anda bukan Manager')
-        }   
+        }
     }
 
-    static listProject(req, res){
-        
+    static listProject(req, res) {
+
         Project.findAll({
-            order:[['id','ASC']]
+            order: [['id', 'ASC']]
         })
             .then(data => {
-
                 res.render('list_project', { data })
             })
             .catch(err => {
@@ -158,14 +160,12 @@ class Controller {
             })
     }
 
-    static edit_projectForm(req, res){
+    static edit_projectForm(req, res) {
         const id = req.params.id
 
         Project.findByPk(id)
             .then(data => {
-                let convertDate = new Date(data.deadline).toISOString()
-                convertDate = convertDate.split('T')[0]
-
+                let convertDate = data.convertDate()
                 res.render('edit_project', { data, convertDate })
             })
             .catch(err => {
@@ -173,7 +173,7 @@ class Controller {
             })
     }
 
-    static edit_project(req, res){
+    static edit_project(req, res) {
         const id = req.params.id
 
         let updateProject = {
@@ -182,7 +182,7 @@ class Controller {
         }
 
         Project.update(updateProject, {
-            where:{
+            where: {
                 id: id
             }
         })
@@ -194,11 +194,11 @@ class Controller {
             })
     }
 
-    static delete_project(req, res){
+    static delete_project(req, res) {
         const id = req.params.id
 
         Project.destroy({
-            where:{
+            where: {
                 id: id
             }
         })

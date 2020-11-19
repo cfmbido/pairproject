@@ -35,5 +35,12 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Employee',
   });
+  
+  Employee.beforeCreate((instance, options) => {
+    instance.phone_number = `+62${instance.phone_number}`
+  })
+
+
+
   return Employee;
 };
