@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/add_data" method="POST">
+        <div>
+            <label for="">First Name</label>
+            <input type="text" name="first_name">
+        </div>
+        <div>
+            <label for="">Last Name</label>
+            <input type="text" name="last_name">
+        </div>
+        <div>
+            <label for="">Gender</label><br>
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">Male</label>
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">Female</label>
+        </div>
+        <div>
+            <label for="">Email</label>
+            <input type="text" name="email">
+        </div>
+        <div>
+            <label for="">Phone Number</label>
+            <input type="text" name="phone_number">
+        </div>
+        <div>
+            <label for="">Role</label>
+            <select name="role" id="">
+                <option value="" selected disabled>--Choose Role---</option>
+                <option value="Project Manager">Project Manager</option>
+                <option value="Full-Stack Developer">Full-Stack Developer</option>
+                <option value="Front-end Developer">Front-end Developer</option>
+                <option value="Back-end Developer">Back-end Developer</option>
+                <option value="Quality Assurance">Quality Assurance</option>
+                <option value="UI/UX Designer">UI/UX Designer</option>
+            </select> 
+        </div>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</body>
+</html>
